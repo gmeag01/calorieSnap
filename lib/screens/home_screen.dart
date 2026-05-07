@@ -59,8 +59,11 @@ class _HomeScreenState extends State<HomeScreen>
   //  사진 촬영 & 분석
   // ──────────────────────────────────────
   Future<void> _takePhoto() async {
-    final XFile? photo =
-        await _picker.pickImage(source: ImageSource.camera, imageQuality: 85);
+    final XFile? photo = await _picker.pickImage(
+      source: ImageSource.camera, 
+      imageQuality: 85,
+      maxWidth: 512,
+      maxHeight: 512,);
     if (photo == null) return;
 
     setState(() => _analyzing = true);

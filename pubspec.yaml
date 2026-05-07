@@ -10,27 +10,41 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # 로컬 저장소 - 가볍고 빠른 NoSQL key-value store
+
+  # ── 로컬 저장소 ──────────────────────────────
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  # 카메라 / 갤러리 접근
+
+  # ── 카메라 ───────────────────────────────────
   image_picker: ^1.0.7
-  # HTTP 클라이언트 (Anthropic API 호출)
-  http: ^1.2.0
-  # 상태 관리
+
+  # ── 온디바이스 ML 추론 ────────────────────────
+  tflite_flutter: ^0.11.0
+
+  # ── 이미지 전처리 (순수 Dart, 서버 불필요) ──────
+  # resize / 채널 분리에 사용. 학습 시 /255.0 전처리와 동일하게 적용.
+  image: ^4.1.7
+
+  # ── 상태 관리 ─────────────────────────────────
   provider: ^6.1.2
-  # 날짜 포맷
+
+  # ── 날짜 포맷 ─────────────────────────────────
   intl: ^0.19.0
-  # 아이콘
+
+  # ── 아이콘 ───────────────────────────────────
   cupertino_icons: ^1.0.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
-  # Hive 코드 생성
   hive_generator: ^2.0.1
   build_runner: ^2.4.8
 
 flutter:
   uses-material-design: true
+
+  assets:
+    # Colab 학습 후 생성되는 파일 2개를 이 경로에 복사
+    - assets/models/mobilenetv3_food.tflite
+    - assets/models/labels.json

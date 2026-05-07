@@ -1,0 +1,102 @@
+[
+  {
+    "index": 0,
+    "label": "pizza",
+    "name_ko": "피자"
+  },
+  {
+    "index": 1,
+    "label": "hamburger",
+    "name_ko": "햄버거"
+  },
+  {
+    "index": 2,
+    "label": "fried_rice",
+    "name_ko": "볶음밥"
+  },
+  {
+    "index": 3,
+    "label": "ramen",
+    "name_ko": "라면"
+  },
+  {
+    "index": 4,
+    "label": "sushi",
+    "name_ko": "스시"
+  },
+  {
+    "index": 5,
+    "label": "steak",
+    "name_ko": "스테이크"
+  },
+  {
+    "index": 6,
+    "label": "donuts",
+    "name_ko": "도넛"
+  },
+  {
+    "index": 7,
+    "label": "ice_cream",
+    "name_ko": "아이스크림"
+  },
+  {
+    "index": 8,
+    "label": "chicken_wings",
+    "name_ko": "치킨 윙"
+  },
+  {
+    "index": 9,
+    "label": "spaghetti_bolognese",
+    "name_ko": "스파게티 볼로네제"
+  },
+  {
+    "index": 10,
+    "label": "spaghetti_carbonara",
+    "name_ko": "스파게티 카르보나라"
+  },
+  {
+    "index": 11,
+    "label": "cup_cakes",
+    "name_ko": "컵케이크"
+  },
+  {
+    "index": 12,
+    "label": "french_toast",
+    "name_ko": "프렌치 토스트"
+  },
+  {
+    "index": 13,
+    "label": "risotto",
+    "name_ko": "리조또"
+  },
+  {
+    "index": 14,
+    "label": "macaroni_and_cheese",
+    "name_ko": "맥앤치즈"
+  },
+  {
+    "index": 15,
+    "label": "grilled_salmon",
+    "name_ko": "연어 구이"
+  },
+  {
+    "index": 16,
+    "label": "bibimbap",
+    "name_ko": "비빔밥"
+  },
+  {
+    "index": 17,
+    "label": "miso_soup",
+    "name_ko": "미소국"
+  },
+  {
+    "index": 18,
+    "label": "tacos",
+    "name_ko": "타코"
+  },
+  {
+    "index": 19,
+    "label": "chocolate_cake",
+    "name_ko": "초코 케이크"
+  }
+]

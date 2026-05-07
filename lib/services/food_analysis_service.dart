@@ -9,7 +9,7 @@ import '../data/food_database.dart';
 // ─────────────────────────────────────────────────────────────
 //  상수
 // ─────────────────────────────────────────────────────────────
-const int    _kImgSize    = 224;   // MobileNetV4 입력 크기
+const int    _kImgSize    = 224;   // MobileNetV3 입력 크기
 const double _kThreshold  = 0.55;  // 이 미만이면 미등록 음식 처리
 const int    _kNumClasses = 20;
 
@@ -61,7 +61,7 @@ class FoodAnalysisService {
   static Future<Interpreter> _getInterpreter() async {
     if (_interpreter != null) return _interpreter!;
 
-    // assets/models/mobilenet_v4_food.tflite 로드
+    // assets/models/mobilenetv3_food.tflite 로드
     // (pubspec.yaml의 flutter.assets에 선언 필요)
     _interpreter = await Interpreter.fromAsset(
       'assets/models/mobilenetv3_food.tflite',

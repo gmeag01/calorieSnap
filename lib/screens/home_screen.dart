@@ -62,8 +62,8 @@ class _HomeScreenState extends State<HomeScreen>
     final XFile? photo = await _picker.pickImage(
       source: ImageSource.camera, 
       imageQuality: 85,
-      maxWidth: 512,
-      maxHeight: 512,);
+      maxWidth: 1080,
+      maxHeight: 1080,);
     if (photo == null) return;
 
     setState(() => _analyzing = true);

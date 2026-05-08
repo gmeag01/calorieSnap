@@ -46,5 +46,5 @@ flutter:
 
   assets:
     # Colab 학습 후 생성되는 파일 2개를 이 경로에 복사
-    - assets/models/mobilenetv3_food.tflite
+    - assets/models/efficientnetv2b0_food.tflite
     - assets/models/labels.json

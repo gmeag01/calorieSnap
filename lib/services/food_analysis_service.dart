@@ -64,7 +64,7 @@ class FoodAnalysisService {
     // assets/models/mobilenetv3_food.tflite 로드
     // (pubspec.yaml의 flutter.assets에 선언 필요)
     _interpreter = await Interpreter.fromAsset(
-      'assets/models/mobilenetv3_food.tflite',
+      'assets/models/efficientnetv2b0_food.tflite',
       options: InterpreterOptions()..threads = 4, // 멀티스레드 추론
     );
     return _interpreter!;

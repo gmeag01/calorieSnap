@@ -149,22 +149,6 @@ flutter pub get
 flutter run
 ```
 
-### 모델 재학습 (선택)
-
-`assets/models/calorie_snap_final.ipynb`를 Google Colab (T4 GPU)에서 실행하면 모델을 직접 학습할 수 있습니다. 학습 후 생성된 `.tflite`와 `labels.json` 파일을 `assets/models/`에 교체하세요.
-
----
-
-## 문제 해결
-
-| 증상 | 해결 방법 |
-|------|----------|
-| TFLite 모델 로드 실패 | `pubspec.yaml`의 `assets` 경로 확인 |
-| Android 빌드 오류 | `compileSdkVersion ≥ 34`, `aaptOptions { noCompress += "tflite" }` 확인 |
-| 신뢰도가 낮아 음식 미인식 | 음식이 화면 중앙에 위치하도록 촬영, 또는 Colab에서 재학습 |
-
----
-
 ## License
 
 This project is open source.

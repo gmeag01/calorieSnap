@@ -130,7 +130,9 @@ class _MealCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: Key('meal_$index'),
+      // recordedAt + foodName 기반 stable key — 인덱스 기반 key는
+      // 삭제 후 리스트가 shift되면 엉뚱한 아이템에 애니메이션 적용됨
+      key: Key('${record.recordedAt.millisecondsSinceEpoch}_${record.foodName}'),
       direction: DismissDirection.endToStart,
       resizeDuration: const Duration(milliseconds: 200),
       background: Container(
@@ -143,13 +145,8 @@ class _MealCard extends StatelessWidget {
         child: const Icon(Icons.delete_forever_rounded,
             color: Colors.white, size: 28),
       ),
-      confirmDismiss: (_) async {
-        final confirmed = await _confirmDelete(context);
-        if (confirmed == true) {
-          onDelete();
-        }
-        return confirmed;
-      },
+      confirmDismiss: (_) => _confirmDelete(context),
+      onDismissed: (_) => onDelete(),
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
@@ -157,7 +154,7 @@ class _MealCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),

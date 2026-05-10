@@ -56,21 +56,131 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   // ──────────────────────────────────────
-  //  사진 촬영 & 분석
+  //  이미지 소스 선택 다이얼로그
+  // ──────────────────────────────────────
+  void _showImageSourceDialog() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: 24),
+            const Text(
+              '이미지 선택',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: _imageSourceButton(
+                    icon: Icons.camera_alt_rounded,
+                    label: '카메라',
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      _takePhoto();
+                    },
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _imageSourceButton(
+                    icon: Icons.image_rounded,
+                    label: '갤러리',
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      _pickFromGallery();
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _imageSourceButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) =>
+      GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          decoration: BoxDecoration(
+            color: Colors.green[50],
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.green[200]!, width: 1.5),
+          ),
+          child: Column(
+            children: [
+              Icon(icon, size: 32, color: Colors.green[600]),
+              const SizedBox(height: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.green[700],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+  // ──────────────────────────────────────
+  //  사진 촬영
   // ──────────────────────────────────────
   Future<void> _takePhoto() async {
     final XFile? photo = await _picker.pickImage(
-      source: ImageSource.camera, 
+      source: ImageSource.camera,
       imageQuality: 85,
       maxWidth: 1080,
-      maxHeight: 1080,);
+      maxHeight: 1080,
+    );
     if (photo == null) return;
+    await _analyzePhoto(File(photo.path));
+  }
 
+  // ──────────────────────────────────────
+  //  갤러리에서 사진 선택
+  // ──────────────────────────────────────
+  Future<void> _pickFromGallery() async {
+    final XFile? photo = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+      maxWidth: 1080,
+      maxHeight: 1080,
+    );
+    if (photo == null) return;
+    await _analyzePhoto(File(photo.path));
+  }
+
+  // ──────────────────────────────────────
+  //  사진 분석 & 결과 저장
+  // ──────────────────────────────────────
+  Future<void> _analyzePhoto(File imageFile) async {
     setState(() => _analyzing = true);
 
     try {
-      final result =
-          await FoodAnalysisService.analyzeFood(File(photo.path));
+      final result = await FoodAnalysisService.analyzeFood(imageFile);
+
+      if (!mounted) return;
 
       if (!result.isFound) {
         _snack('등록되지 않은 음식입니다.');
@@ -83,14 +193,15 @@ class _HomeScreenState extends State<HomeScreen>
         carbs: result.carbs,
         protein: result.protein,
         fat: result.fat,
-        imagePath: photo.path,
+        imagePath: imageFile.path,
         recordedAt: DateTime.now(),
       );
 
-      if (!mounted) return;
       await context.read<AppProvider>().addMealRecord(record);
+      if (!mounted) return;
       _showResultSheet(result);
     } catch (e) {
+      if (!mounted) return;
       _snack('분석 중 오류가 발생했습니다.\n($e)');
     } finally {
       if (mounted) setState(() => _analyzing = false);
@@ -363,7 +474,7 @@ class _HomeScreenState extends State<HomeScreen>
                       TextStyle(fontSize: 13, color: Colors.grey[500])),
               const SizedBox(height: 12),
               GestureDetector(
-                onTap: _analyzing ? null : _takePhoto,
+                onTap: _analyzing ? null : _showImageSourceDialog,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   width: 76,
@@ -375,7 +486,7 @@ class _HomeScreenState extends State<HomeScreen>
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.green.withOpacity(0.35),
+                        color: Colors.green.withValues(alpha: 0.35),
                         blurRadius: 22,
                         offset: const Offset(0, 8),
                       ),
@@ -433,7 +544,7 @@ class _HomeScreenState extends State<HomeScreen>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 10,
               offset: const Offset(0, 3)),
         ],
@@ -489,13 +600,13 @@ class _HomeScreenState extends State<HomeScreen>
             label: '오늘의 기록',
             subtitle: '분석한 음식 목록 보기',
             onTap: () {
+              // Navigator를 async gap 이전에 캡처 (use_build_context_synchronously 방지)
+              final nav = Navigator.of(context);
               _closeSidebar();
               Future.delayed(
                 const Duration(milliseconds: 300),
-                () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const RecordsScreen()),
+                () => nav.push(
+                  MaterialPageRoute(builder: (_) => const RecordsScreen()),
                 ),
               );
             },

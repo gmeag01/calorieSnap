@@ -1,20 +1,66 @@
 import 'dart:io';
-// import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:image/image.dart' as img;
 import 'package:tflite_flutter/tflite_flutter.dart';
 
 import '../data/food_database.dart';
 
-// ─────────────────────────────────────────────────────────────
-//  상수
-// ─────────────────────────────────────────────────────────────
-const int    _kImgSize    = 224;   // MobileNetV3 입력 크기
-const double _kThreshold  = 0.55;  // 이 미만이면 미등록 음식 처리
+const int    _kImgSize    = 224;
+const double _kThreshold  = 0.55;
 const int    _kNumClasses = 20;
 
 // ─────────────────────────────────────────────────────────────
-//  결과 모델 (변경 없음 — 외부 인터페이스 유지)
+//  Top-level function required by compute() — background isolate에서 실행
+//  (static method나 클로저는 isolate 경계를 넘을 때 불안정)
+//
+//  학습 전처리와 완전 일치:
+//    bakeOrientation → CenterCrop → resize(linear) → [-1,1] 정규화
+// ─────────────────────────────────────────────────────────────
+Float32List? _buildInputTensor(Uint8List bytes) {
+  img.Image? decoded = img.decodeImage(bytes);
+  if (decoded == null) return null;
+
+  // EXIF orientation 적용 — 카메라 촬영 사진의 회전 메타데이터 반영
+  decoded = img.bakeOrientation(decoded);
+
+  // CenterCrop — 비율 유지 정사각형
+  final w        = decoded.width;
+  final h        = decoded.height;
+  final cropSize = w < h ? w : h;
+
+  final cropped = img.copyCrop(
+    decoded,
+    x:      (w - cropSize) ~/ 2,
+    y:      (h - cropSize) ~/ 2,
+    width:  cropSize,
+    height: cropSize,
+  );
+
+  // Resize 224×224 — linear = TF 기본 bilinear와 동일
+  final resized = img.copyResize(
+    cropped,
+    width:         _kImgSize,
+    height:        _kImgSize,
+    interpolation: img.Interpolation.linear,
+  );
+
+  // Float32 평탄 버퍼 + [-1, 1] 정규화
+  final buffer = Float32List(_kImgSize * _kImgSize * 3);
+  var idx = 0;
+  for (int y = 0; y < _kImgSize; y++) {
+    for (int x = 0; x < _kImgSize; x++) {
+      final pixel = resized.getPixel(x, y);
+      buffer[idx++] = pixel.r / 127.5 - 1.0;
+      buffer[idx++] = pixel.g / 127.5 - 1.0;
+      buffer[idx++] = pixel.b / 127.5 - 1.0;
+    }
+  }
+  return buffer;
+}
+
+// ─────────────────────────────────────────────────────────────
+//  결과 모델
 // ─────────────────────────────────────────────────────────────
 class FoodAnalysisResult {
   final String foodName;
@@ -46,58 +92,40 @@ class FoodAnalysisResult {
 // ─────────────────────────────────────────────────────────────
 //  음식 분석 서비스 — 온디바이스 TFLite 추론
 //
-//  흐름:
-//    analyzeFood(imageFile)
-//      ├─ _getInterpreter()   : 인터프리터 lazy 초기화 (앱 내 1회)
-//      ├─ _preprocess()       : 이미지 → Float32 텐서 [1,224,224,3]
-//      ├─ interpreter.run()   : 모델 추론 → softmax 확률 [1,20]
-//      ├─ argmax + threshold  : 최고 확률 클래스 선택
-//      └─ _lookupDb()         : label → FoodEntry 조회
+//  analyzeFood(imageFile)
+//    ├─ readAsBytes()          : 파일 읽기 (async I/O)
+//    ├─ compute(_buildInputTensor) : 전처리 → background isolate
+//    ├─ interpreter.run()      : TFLite 추론 (메인 isolate)
+//    ├─ argmax + threshold
+//    └─ label → FoodEntry 조회
 // ─────────────────────────────────────────────────────────────
 class FoodAnalysisService {
-  // ── 인터프리터 싱글톤 ──────────────────────────────────────
   static Interpreter? _interpreter;
 
   static Future<Interpreter> _getInterpreter() async {
     if (_interpreter != null) return _interpreter!;
-
-    // assets/models/mobilenetv3_food.tflite 로드
-    // (pubspec.yaml의 flutter.assets에 선언 필요)
     _interpreter = await Interpreter.fromAsset(
       'assets/models/efficientnetv2b0_food.tflite',
-      options: InterpreterOptions()..threads = 4, // 멀티스레드 추론
+      options: InterpreterOptions()..threads = 4,
     );
     return _interpreter!;
   }
 
-  // ─────────────────────────────────────────────────────────
-  //  공개 진입점 — 외부에서 호출하는 유일한 메서드
-  // ─────────────────────────────────────────────────────────
   static Future<FoodAnalysisResult> analyzeFood(File imageFile) async {
-    // 1. 이미지 전처리
-    final input = await _preprocess(imageFile);
+    final Object? input = await _preprocess(imageFile);
     if (input == null) return FoodAnalysisResult.notFound();
 
-    // 2. TFLite 추론
     final interpreter = await _getInterpreter();
 
-    // 출력 버퍼: [1][20] float32
-    final output = List.generate(
-      1, (_) => List.filled(_kNumClasses, 0.0),
-    );
-
+    final output = List.generate(1, (_) => List.filled(_kNumClasses, 0.0));
     interpreter.run(input, output);
 
-    // 3. argmax + 신뢰도 필터
     final scores     = output[0];
     final topIndex   = _argmax(scores);
     final confidence = scores[topIndex];
 
-    if (confidence < _kThreshold) {
-      return FoodAnalysisResult.notFound();
-    }
+    if (confidence < _kThreshold) return FoodAnalysisResult.notFound();
 
-    // 4. 인덱스 → label → DB 조회
     final label = kLabelsList[topIndex];
     final entry = _lookupDb(label);
     if (entry == null) return FoodAnalysisResult.notFound();
@@ -112,69 +140,15 @@ class FoodAnalysisService {
     );
   }
 
-  // ─────────────────────────────────────────────────────────
-  //  이미지 전처리 (Aspect Ratio 보존)
-  //
-  //  개선: CenterCrop으로 비율 유지
-  //    1. 정사각형 영역으로 센터 크롭 (비율 유지)
-  //    2. 224×224 리사이즈
-  //    3. float32 / 255.0 → [0.0, 1.0] 정규화
-  //    4. shape: [1][224][224][3]
-  //
-  //  예시 (원본 1920×1080):
-  //    → 1080×1080 정사각형 자르기 (중앙)
-  //    → 224×224 리사이즈
-  // ─────────────────────────────────────────────────────────
-  static Future<List<List<List<List<double>>>>?> _preprocess(
-      File imageFile) async {
-    final bytes   = await imageFile.readAsBytes();
-    final decoded = img.decodeImage(bytes);
-    if (decoded == null) return null;
-
-    // Step 1: CenterCrop — 비율 유지하며 정사각형 자르기
-    final w       = decoded.width;
-    final h       = decoded.height;
-    final cropSize = w < h ? w : h;  // min(width, height)
-
-    final offsetX = (w - cropSize) ~/ 2;
-    final offsetY = (h - cropSize) ~/ 2;
-
-    final cropped = img.copyCrop(
-      decoded,
-      x:      offsetX,
-      y:      offsetY,
-      width:  cropSize,
-      height: cropSize,
-    );
-
-    // Step 2: 224×224 리사이즈
-    final resized = img.copyResize(
-      cropped,
-      width:         _kImgSize,
-      height:        _kImgSize,
-      interpolation: img.Interpolation.cubic,
-    );
-
-    // Step 3: [1][H][W][C] Float 텐서 생성 + 정규화
-    return List.generate(
-      1, (_) => List.generate(
-        _kImgSize, (y) => List.generate(
-          _kImgSize, (x) {
-            final pixel = resized.getPixel(x, y);
-            return [
-              pixel.r / 127.5 - 1.0, // R
-              pixel.g / 127.5 - 1.0, // G
-              pixel.b / 127.5 - 1.0, // B
-            ];
-          },
-        ),
-      ),
-    );
+  // readAsBytes()는 비동기 I/O → 메인 isolate에서 수행
+  // 이후 CPU-intensive 전처리는 compute()로 분리
+  static Future<Object?> _preprocess(File imageFile) async {
+    final bytes = await imageFile.readAsBytes();
+    final Float32List? buffer = await compute(_buildInputTensor, bytes);
+    if (buffer == null) return null;
+    return buffer.reshape([1, _kImgSize, _kImgSize, 3]);
   }
 
-  // ─────────────────────────────────────────────────────────
-  //  argmax 헬퍼
-  // ─────────────────────────────────────────────────────────
   static int _argmax(List<double> scores) {
     int    best      = 0;
     double bestScore = scores[0];
@@ -187,14 +161,8 @@ class FoodAnalysisService {
     return best;
   }
 
-  // ─────────────────────────────────────────────────────────
-  //  DB 조회 — label → FoodEntry
-  // ─────────────────────────────────────────────────────────
   static FoodEntry? _lookupDb(String label) => kFoodDatabase[label];
 
-  // ─────────────────────────────────────────────────────────
-  //  인터프리터 해제 (앱 종료 시 호출 권장)
-  // ─────────────────────────────────────────────────────────
   static void dispose() {
     _interpreter?.close();
     _interpreter = null;

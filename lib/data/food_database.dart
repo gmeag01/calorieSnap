@@ -1,19 +1,19 @@
-/// 음식 영양 정보 데이터베이스
-///
-/// ─────────────────────────────────────────────────────────────
-///  ⚠️  kLabelsList 순서는 Colab 학습 시 SELECTED_CLASSES 순서와
-///  반드시 일치해야 합니다.
-///  모델 출력 인덱스 → label → FoodEntry 순으로 조회합니다.
-///
-///  Colab SELECTED_CLASSES = [
-///    'pizza', 'hamburger', 'fried_rice', 'ramen', 'sushi',
-///    'steak', 'donuts', 'ice_cream', 'chicken_wings',
-///    'spaghetti_bolognese', 'spaghetti_carbonara', 'cup_cakes',
-///    'french_toast', 'risotto', 'macaroni_and_cheese',
-///    'grilled_salmon', 'bibimbap', 'miso_soup', 'tacos',
-///    'chocolate_cake'
-///  ]
-/// ─────────────────────────────────────────────────────────────
+// 음식 영양 정보 데이터베이스
+//
+// ─────────────────────────────────────────────────────────────
+//  ⚠️  kLabelsList 순서는 Colab 학습 시 SELECTED_CLASSES 순서와
+//  반드시 일치해야 합니다.
+//  모델 출력 인덱스 → label → FoodEntry 순으로 조회합니다.
+//
+//  Colab SELECTED_CLASSES = [
+//    'pizza', 'hamburger', 'fried_rice', 'ramen', 'sushi',
+//    'steak', 'donuts', 'ice_cream', 'chicken_wings',
+//    'spaghetti_bolognese', 'spaghetti_carbonara', 'cup_cakes',
+//    'french_toast', 'risotto', 'macaroni_and_cheese',
+//    'grilled_salmon', 'bibimbap', 'miso_soup', 'tacos',
+//    'chocolate_cake'
+//  ]
+// ─────────────────────────────────────────────────────────────
 
 class FoodEntry {
   final String name;       // 한국어 표시명

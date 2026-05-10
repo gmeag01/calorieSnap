@@ -66,5 +66,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<!-- 카메라 접근 권한 -->
+	<key>NSCameraUsageDescription</key>
+	<string>음식 사진을 촬영하기 위해 카메라 접근이 필요합니다</string>
+	<!-- 갤러리 접근 권한 -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>음식 사진을 선택하기 위해 갤러리 접근이 필요합니다</string>
 </dict>
 </plist>

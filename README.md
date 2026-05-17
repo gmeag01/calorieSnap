@@ -77,26 +77,170 @@
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │                        UI Layer                              │
-├─────────────────┬──────────────────┬─────────────────────────┤
-│ OnboardingScreen│   HomeScreen     │     RecordsScreen       │
-│  (신체정보 입력) │ (영양추적 + 촬영) │   (오늘 식사 기록)       │
-└─────────────────┴──────────────────┴─────────────────────────┘
+├──────────────┬──────────────────┬────────────┬──────────────┤
+│ Onboarding   │   HomeScreen     │ Records    │  Calendar    │
+│ (신체정보)   │ (영양추적 + 촬영) │ (오늘기록) │  (날짜보기)   │
+└──────────────┴──────────────────┴────────────┴──────────────┘
                               │
                      AppProvider (Provider)
-                    ┌──────────────────┐
-                    │  UserProfile     │  ← 신체정보 & 영양 목표
-                    │  List<MealRecord>│  ← 오늘 식사 캐시
-                    └──────────────────┘
-                       │            │
-          ┌────────────┘            └────────────────┐
-          ▼                                          ▼
-  Hive Local DB                          FoodAnalysisService
-  ┌──────────────┐                       ┌──────────────────────┐
-  │ UserProfile  │                       │ CenterCrop + Resize   │
-  │ MealRecord   │                       │ EfficientNetV2B0      │
-  └──────────────┘                       │ Confidence Filter     │
-                                         │ FoodDatabase Lookup   │
-                                         └──────────────────────┘
+                    ┌──────────────────────┐
+                    │  UserProfile         │  ← 신체정보 & 영양 목표
+                    │  List<MealRecord>    │  ← 캐시 (오늘만)
+                    │  recordsForDate()    │  ← 날짜별 조회
+                    │  allRecordDates      │  ← 캘린더 마킹용
+                    └──────────────────────┘
+                       │                 │
+          ┌────────────┘                 └────────────────┐
+          ▼                                              ▼
+  Hive Local Database                    FoodAnalysisService
+  ┌──────────────────┐                  ┌─────────────────────┐
+  │ userProfile Box  │                  │ _buildInputTensor   │
+  │ mealRecords Box  │◄─────────────────│ - EXIF 회전        │
+  │ (영구 저장)       │                  │ - CenterCrop       │
+  └──────────────────┘                  │ - Resize 224×224   │
+                                         │ - 정규화 [-1,1]    │
+                                         │                    │
+                                         │ EfficientNetV2B0   │
+                                         │ (TFLite INT8)      │
+                                         │                    │
+                                         │ FoodDatabase       │
+                                         │ Lookup & Return    │
+                                         └─────────────────────┘
+```
+
+---
+
+## 프로젝트 구조
+
+```
+lib/
+├── main.dart                           # 앱 진입점
+├── models/
+│   ├── meal_record.dart               # 음식 기록 모델 (@HiveType)
+│   ├── meal_record.g.dart             # Hive 생성 코드
+│   ├── user_profile.dart              # 사용자 프로필 모델 (@HiveType)
+│   └── user_profile.g.dart            # Hive 생성 코드
+├── providers/
+│   └── app_provider.dart              # 상태 관리 (Provider)
+├── screens/
+│   ├── onboarding_screen.dart         # 신체정보 입력
+│   ├── home_screen.dart               # 메인 화면 (촬영 + 영양추적)
+│   ├── records_screen.dart            # 오늘의 기록 목록
+│   └── calendar_screen.dart           # 캘린더 (날짜별 기록)
+├── services/
+│   └── food_analysis_service.dart     # TFLite 추론 서비스
+├── widgets/
+│   └── nutrition_progress_bar.dart    # 영양 진행률 바
+└── data/
+    └── food_database.dart             # 음식 영양정보 데이터베이스
+
+assets/
+├── models/
+│   ├── efficientnetv2b0_food.tflite  # TFLite 모델 (~3.5MB)
+│   ├── labels.json                   # 클래스 레이블
+│   └── calorie_snap_food101_full.ipynb # 모델 학습 노트북
+```
+
+---
+
+## 주요 파일 설명
+
+### Models (`lib/models/`)
+- **MealRecord**: 음식 기록 (음식명, 영양정보, 사진 경로, 타임스탐프)
+- **UserProfile**: 사용자 신체정보 (키, 몸무게, 나이, 성별, 일일 영양 목표)
+- 모두 `@HiveType` 어노테이션으로 로컬 DB 저장 지원
+
+### Providers (`lib/providers/`)
+- **AppProvider**: 단일 상태 관리 클래스
+  - 신체정보 저장/로드
+  - 오늘 기록 캐시 (`_todayCache`)
+  - 날짜별 기록 조회 (`recordsForDate()`)
+  - 영양 목표 대비 현황 계산
+
+### Screens (`lib/screens/`)
+1. **OnboardingScreen**: 신체정보 입력 (앱 시작 시 또는 설정에서)
+2. **HomeScreen**: 
+   - 실시간 영양소 진행률 표시
+   - 카메라/갤러리로 음식 촬영
+   - 사이드바 메뉴
+3. **RecordsScreen**: 오늘의 기록 목록 (삭제 기능)
+4. **CalendarScreen**: 
+   - 월 단위 캘린더 보기
+   - 기록이 있는 날 마킹 (초과 시 빨강)
+   - 날짜 클릭 시 상세 기록 조회
+
+### Services (`lib/services/`)
+- **FoodAnalysisService**:
+  - 이미지 전처리 (EXIF 회전, CenterCrop, 리사이즈)
+  - TFLite 추론 실행
+  - 신뢰도 임계값 필터링
+  - 음식 데이터베이스 조회
+
+---
+
+## 데이터 저장
+
+### Hive 로컬 데이터베이스
+```dart
+// 두 개의 Box 사용
+Hive.box<UserProfile>('userProfile')    // 사용자 프로필 (1개)
+Hive.box<MealRecord>('mealRecords')     // 모든 식사 기록 (영구 저장)
+```
+
+### 저장 용량 추정
+- **하루 3개 기록**: 약 5-7 KB/주
+- **1년 누적**: 약 270-400 KB
+- **이미지**: 경로만 저장 (실제 파일은 카메라/갤러리에서 관리)
+
+---
+
+## 캘린더 기능
+
+- **월 단위 보기**: 이전/다음 월 네비게이션
+- **기록 마킹**: 
+  - 🟢 초록 점: 기준치 이내
+  - 🔴 빨강 점: 기준치 초과
+- **날짜 상세**: 클릭 시 모달에서 그날의 모든 기록 표시
+- **기록 관리**: 상세 보기에서 수정/삭제 가능
+
+⚠️ **주의**: 데이터는 계속 누적되므로 수동 삭제가 필요하면 구현 검토 필요
+
+---
+
+## 아키텍처
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                        UI Layer                              │
+├──────────────┬──────────────────┬────────────┬──────────────┤
+│ Onboarding   │   HomeScreen     │ Records    │  Calendar    │
+│ (신체정보)   │ (영양추적 + 촬영) │ (오늘기록) │  (날짜보기)   │
+└──────────────┴──────────────────┴────────────┴──────────────┘
+                              │
+                     AppProvider (Provider)
+                    ┌──────────────────────┐
+                    │  UserProfile         │  ← 신체정보 & 영양 목표
+                    │  List<MealRecord>    │  ← 캐시 (오늘만)
+                    │  recordsForDate()    │  ← 날짜별 조회
+                    │  allRecordDates      │  ← 캘린더 마킹용
+                    └──────────────────────┘
+                       │                 │
+          ┌────────────┘                 └────────────────┐
+          ▼                                              ▼
+  Hive Local Database                    FoodAnalysisService
+  ┌──────────────────┐                  ┌─────────────────────┐
+  │ userProfile Box  │                  │ _buildInputTensor   │
+  │ mealRecords Box  │◄─────────────────│ - EXIF 회전        │
+  │ (영구 저장)       │                  │ - CenterCrop       │
+  └──────────────────┘                  │ - Resize 224×224   │
+                                         │ - 정규화 [-1,1]    │
+                                         │                    │
+                                         │ EfficientNetV2B0   │
+                                         │ (TFLite INT8)      │
+                                         │                    │
+                                         │ FoodDatabase       │
+                                         │ Lookup & Return    │
+                                         └─────────────────────┘
 ```
 
 ---

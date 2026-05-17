@@ -180,12 +180,34 @@ class _MealCard extends StatelessWidget {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(record.foodName,
-                        style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis),
+                    Row(children: [
+                      Expanded(
+                        child: Text(record.foodName,
+                            style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis),
+                      ),
+                      if (record.amount != null && record.unit != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 7, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.green[50],
+                            borderRadius: BorderRadius.circular(7),
+                            border: Border.all(
+                                color: Colors.green[200]!, width: 1),
+                          ),
+                          child: Text(
+                            '${record.amount!.toInt()} ${record.unit}',
+                            style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.green[700],
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                    ]),
                     const SizedBox(height: 4),
                     Text(
                       '${record.calories.toStringAsFixed(0)} kcal',

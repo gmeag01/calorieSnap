@@ -25,6 +25,12 @@ class MealRecord {
   @HiveField(6)
   DateTime recordedAt;
 
+  @HiveField(7)
+  double? amount;
+
+  @HiveField(8)
+  String? unit;
+
   MealRecord({
     required this.foodName,
     required this.calories,
@@ -33,5 +39,7 @@ class MealRecord {
     required this.fat,
     required this.imagePath,
     required this.recordedAt,
+    this.amount,
+    this.unit,
   });
 }

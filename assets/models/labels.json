@@ -1,102 +1,507 @@
 [
   {
     "index": 0,
-    "label": "pizza",
-    "name_ko": "피자"
+    "label": "apple_pie",
+    "name_ko": "애플 파이"
   },
   {
     "index": 1,
-    "label": "hamburger",
-    "name_ko": "햄버거"
+    "label": "baby_back_ribs",
+    "name_ko": "베이비 백 립"
   },
   {
     "index": 2,
-    "label": "fried_rice",
-    "name_ko": "볶음밥"
+    "label": "baklava",
+    "name_ko": "바클라바"
   },
   {
     "index": 3,
-    "label": "ramen",
-    "name_ko": "라면"
+    "label": "beef_carpaccio",
+    "name_ko": "비프 카르파초"
   },
   {
     "index": 4,
-    "label": "sushi",
-    "name_ko": "스시"
+    "label": "beef_tartare",
+    "name_ko": "비프 타르타르"
   },
   {
     "index": 5,
-    "label": "steak",
-    "name_ko": "스테이크"
+    "label": "beet_salad",
+    "name_ko": "비트 샐러드"
   },
   {
     "index": 6,
-    "label": "donuts",
-    "name_ko": "도넛"
+    "label": "beignets",
+    "name_ko": "베녜"
   },
   {
     "index": 7,
-    "label": "ice_cream",
-    "name_ko": "아이스크림"
-  },
-  {
-    "index": 8,
-    "label": "chicken_wings",
-    "name_ko": "치킨 윙"
-  },
-  {
-    "index": 9,
-    "label": "spaghetti_bolognese",
-    "name_ko": "스파게티 볼로네제"
-  },
-  {
-    "index": 10,
-    "label": "spaghetti_carbonara",
-    "name_ko": "스파게티 카르보나라"
-  },
-  {
-    "index": 11,
-    "label": "cup_cakes",
-    "name_ko": "컵케이크"
-  },
-  {
-    "index": 12,
-    "label": "french_toast",
-    "name_ko": "프렌치 토스트"
-  },
-  {
-    "index": 13,
-    "label": "risotto",
-    "name_ko": "리조또"
-  },
-  {
-    "index": 14,
-    "label": "macaroni_and_cheese",
-    "name_ko": "맥앤치즈"
-  },
-  {
-    "index": 15,
-    "label": "grilled_salmon",
-    "name_ko": "연어 구이"
-  },
-  {
-    "index": 16,
     "label": "bibimbap",
     "name_ko": "비빔밥"
   },
   {
+    "index": 8,
+    "label": "bread_pudding",
+    "name_ko": "브레드 푸딩"
+  },
+  {
+    "index": 9,
+    "label": "breakfast_burrito",
+    "name_ko": "아침 부리토"
+  },
+  {
+    "index": 10,
+    "label": "bruschetta",
+    "name_ko": "브루스케타"
+  },
+  {
+    "index": 11,
+    "label": "caesar_salad",
+    "name_ko": "시저 샐러드"
+  },
+  {
+    "index": 12,
+    "label": "cannoli",
+    "name_ko": "카놀리"
+  },
+  {
+    "index": 13,
+    "label": "caprese_salad",
+    "name_ko": "카프레제 샐러드"
+  },
+  {
+    "index": 14,
+    "label": "carrot_cake",
+    "name_ko": "당근 케이크"
+  },
+  {
+    "index": 15,
+    "label": "ceviche",
+    "name_ko": "세비체"
+  },
+  {
+    "index": 16,
+    "label": "cheesecake",
+    "name_ko": "치즈케이크"
+  },
+  {
     "index": 17,
+    "label": "cheese_plate",
+    "name_ko": "치즈 플레이트"
+  },
+  {
+    "index": 18,
+    "label": "chicken_curry",
+    "name_ko": "치킨 카레"
+  },
+  {
+    "index": 19,
+    "label": "chicken_quesadilla",
+    "name_ko": "치킨 퀘사디아"
+  },
+  {
+    "index": 20,
+    "label": "chicken_wings",
+    "name_ko": "치킨 윙"
+  },
+  {
+    "index": 21,
+    "label": "chocolate_cake",
+    "name_ko": "초코 케이크"
+  },
+  {
+    "index": 22,
+    "label": "chocolate_mousse",
+    "name_ko": "초콜릿 무스"
+  },
+  {
+    "index": 23,
+    "label": "churros",
+    "name_ko": "추로스"
+  },
+  {
+    "index": 24,
+    "label": "clam_chowder",
+    "name_ko": "클램 차우더"
+  },
+  {
+    "index": 25,
+    "label": "club_sandwich",
+    "name_ko": "클럽 샌드위치"
+  },
+  {
+    "index": 26,
+    "label": "crab_cakes",
+    "name_ko": "크랩 케이크"
+  },
+  {
+    "index": 27,
+    "label": "creme_brulee",
+    "name_ko": "크렘 브륄레"
+  },
+  {
+    "index": 28,
+    "label": "croque_madame",
+    "name_ko": "크로크 마담"
+  },
+  {
+    "index": 29,
+    "label": "cup_cakes",
+    "name_ko": "컵케이크"
+  },
+  {
+    "index": 30,
+    "label": "deviled_eggs",
+    "name_ko": "데빌드 에그"
+  },
+  {
+    "index": 31,
+    "label": "donuts",
+    "name_ko": "도넛"
+  },
+  {
+    "index": 32,
+    "label": "dumplings",
+    "name_ko": "만두"
+  },
+  {
+    "index": 33,
+    "label": "edamame",
+    "name_ko": "에다마메"
+  },
+  {
+    "index": 34,
+    "label": "eggs_benedict",
+    "name_ko": "에그 베네딕트"
+  },
+  {
+    "index": 35,
+    "label": "escargots",
+    "name_ko": "에스카르고"
+  },
+  {
+    "index": 36,
+    "label": "falafel",
+    "name_ko": "팔라펠"
+  },
+  {
+    "index": 37,
+    "label": "filet_mignon",
+    "name_ko": "필레 미뇽"
+  },
+  {
+    "index": 38,
+    "label": "fish_and_chips",
+    "name_ko": "피시 앤 칩스"
+  },
+  {
+    "index": 39,
+    "label": "foie_gras",
+    "name_ko": "푸아그라"
+  },
+  {
+    "index": 40,
+    "label": "french_fries",
+    "name_ko": "감자튀김"
+  },
+  {
+    "index": 41,
+    "label": "french_onion_soup",
+    "name_ko": "프렌치 어니언 수프"
+  },
+  {
+    "index": 42,
+    "label": "french_toast",
+    "name_ko": "프렌치 토스트"
+  },
+  {
+    "index": 43,
+    "label": "fried_calamari",
+    "name_ko": "프라이드 칼라마리"
+  },
+  {
+    "index": 44,
+    "label": "fried_rice",
+    "name_ko": "볶음밥"
+  },
+  {
+    "index": 45,
+    "label": "frozen_yogurt",
+    "name_ko": "프로즌 요거트"
+  },
+  {
+    "index": 46,
+    "label": "garlic_bread",
+    "name_ko": "마늘빵"
+  },
+  {
+    "index": 47,
+    "label": "gnocchi",
+    "name_ko": "뇨키"
+  },
+  {
+    "index": 48,
+    "label": "greek_salad",
+    "name_ko": "그릭 샐러드"
+  },
+  {
+    "index": 49,
+    "label": "grilled_cheese_sandwich",
+    "name_ko": "그릴드 치즈 샌드위치"
+  },
+  {
+    "index": 50,
+    "label": "grilled_salmon",
+    "name_ko": "연어 구이"
+  },
+  {
+    "index": 51,
+    "label": "guacamole",
+    "name_ko": "과카몰레"
+  },
+  {
+    "index": 52,
+    "label": "gyoza",
+    "name_ko": "교자"
+  },
+  {
+    "index": 53,
+    "label": "hamburger",
+    "name_ko": "햄버거"
+  },
+  {
+    "index": 54,
+    "label": "hot_and_sour_soup",
+    "name_ko": "산라탕"
+  },
+  {
+    "index": 55,
+    "label": "hot_dog",
+    "name_ko": "핫도그"
+  },
+  {
+    "index": 56,
+    "label": "huevos_rancheros",
+    "name_ko": "우에보스 란체로스"
+  },
+  {
+    "index": 57,
+    "label": "hummus",
+    "name_ko": "후무스"
+  },
+  {
+    "index": 58,
+    "label": "ice_cream",
+    "name_ko": "아이스크림"
+  },
+  {
+    "index": 59,
+    "label": "lasagna",
+    "name_ko": "라자냐"
+  },
+  {
+    "index": 60,
+    "label": "lobster_bisque",
+    "name_ko": "랍스터 비스크"
+  },
+  {
+    "index": 61,
+    "label": "lobster_roll_sandwich",
+    "name_ko": "랍스터 롤 샌드위치"
+  },
+  {
+    "index": 62,
+    "label": "macaroni_and_cheese",
+    "name_ko": "맥앤치즈"
+  },
+  {
+    "index": 63,
+    "label": "macarons",
+    "name_ko": "마카롱"
+  },
+  {
+    "index": 64,
     "label": "miso_soup",
     "name_ko": "미소국"
   },
   {
-    "index": 18,
+    "index": 65,
+    "label": "mussels",
+    "name_ko": "홍합찜"
+  },
+  {
+    "index": 66,
+    "label": "nachos",
+    "name_ko": "나초"
+  },
+  {
+    "index": 67,
+    "label": "omelette",
+    "name_ko": "오믈렛"
+  },
+  {
+    "index": 68,
+    "label": "onion_rings",
+    "name_ko": "어니언 링"
+  },
+  {
+    "index": 69,
+    "label": "oysters",
+    "name_ko": "굴"
+  },
+  {
+    "index": 70,
+    "label": "pad_thai",
+    "name_ko": "팟타이"
+  },
+  {
+    "index": 71,
+    "label": "paella",
+    "name_ko": "파에야"
+  },
+  {
+    "index": 72,
+    "label": "pancakes",
+    "name_ko": "팬케이크"
+  },
+  {
+    "index": 73,
+    "label": "panna_cotta",
+    "name_ko": "판나코타"
+  },
+  {
+    "index": 74,
+    "label": "peking_duck",
+    "name_ko": "베이징 덕"
+  },
+  {
+    "index": 75,
+    "label": "pho",
+    "name_ko": "쌀국수(포)"
+  },
+  {
+    "index": 76,
+    "label": "pizza",
+    "name_ko": "피자"
+  },
+  {
+    "index": 77,
+    "label": "pork_chop",
+    "name_ko": "포크 찹"
+  },
+  {
+    "index": 78,
+    "label": "poutine",
+    "name_ko": "푸틴"
+  },
+  {
+    "index": 79,
+    "label": "prime_rib",
+    "name_ko": "프라임 립"
+  },
+  {
+    "index": 80,
+    "label": "pulled_pork_sandwich",
+    "name_ko": "풀드 포크 샌드위치"
+  },
+  {
+    "index": 81,
+    "label": "ramen",
+    "name_ko": "라면"
+  },
+  {
+    "index": 82,
+    "label": "ravioli",
+    "name_ko": "라비올리"
+  },
+  {
+    "index": 83,
+    "label": "red_velvet_cake",
+    "name_ko": "레드 벨벳 케이크"
+  },
+  {
+    "index": 84,
+    "label": "risotto",
+    "name_ko": "리조또"
+  },
+  {
+    "index": 85,
+    "label": "samosa",
+    "name_ko": "사모사"
+  },
+  {
+    "index": 86,
+    "label": "sashimi",
+    "name_ko": "사시미"
+  },
+  {
+    "index": 87,
+    "label": "scallops",
+    "name_ko": "가리비"
+  },
+  {
+    "index": 88,
+    "label": "seaweed_salad",
+    "name_ko": "해초 샐러드"
+  },
+  {
+    "index": 89,
+    "label": "shrimp_and_grits",
+    "name_ko": "새우 그릿츠"
+  },
+  {
+    "index": 90,
+    "label": "spaghetti_bolognese",
+    "name_ko": "스파게티 볼로네제"
+  },
+  {
+    "index": 91,
+    "label": "spaghetti_carbonara",
+    "name_ko": "스파게티 카르보나라"
+  },
+  {
+    "index": 92,
+    "label": "spring_rolls",
+    "name_ko": "스프링 롤"
+  },
+  {
+    "index": 93,
+    "label": "steak",
+    "name_ko": "스테이크"
+  },
+  {
+    "index": 94,
+    "label": "strawberry_shortcake",
+    "name_ko": "딸기 쇼트케이크"
+  },
+  {
+    "index": 95,
+    "label": "sushi",
+    "name_ko": "스시"
+  },
+  {
+    "index": 96,
     "label": "tacos",
     "name_ko": "타코"
   },
   {
-    "index": 19,
-    "label": "chocolate_cake",
-    "name_ko": "초코 케이크"
+    "index": 97,
+    "label": "takoyaki",
+    "name_ko": "타코야키"
+  },
+  {
+    "index": 98,
+    "label": "tiramisu",
+    "name_ko": "티라미수"
+  },
+  {
+    "index": 99,
+    "label": "tuna_tartare",
+    "name_ko": "참치 타르타르"
+  },
+  {
+    "index": 100,
+    "label": "waffles",
+    "name_ko": "와플"
   }
 ]

@@ -8,7 +8,7 @@ import '../data/food_database.dart';
 
 const int    _kImgSize    = 224;
 const double _kThreshold  = 0.55;
-const int    _kNumClasses = 20;
+const int    _kNumClasses = 101;
 
 // ─────────────────────────────────────────────────────────────
 //  Top-level function required by compute() — background isolate에서 실행
@@ -64,6 +64,7 @@ Float32List? _buildInputTensor(Uint8List bytes) {
 // ─────────────────────────────────────────────────────────────
 class FoodAnalysisResult {
   final String foodName;
+  final String label;   // kFoodDatabase key (예: 'pizza')
   final double calories;
   final double carbs;
   final double protein;
@@ -72,6 +73,7 @@ class FoodAnalysisResult {
 
   const FoodAnalysisResult({
     required this.foodName,
+    required this.label,
     required this.calories,
     required this.carbs,
     required this.protein,
@@ -81,6 +83,7 @@ class FoodAnalysisResult {
 
   factory FoodAnalysisResult.notFound() => const FoodAnalysisResult(
         foodName: '등록되지 않은 음식입니다.',
+        label: '',
         calories: 0,
         carbs: 0,
         protein: 0,
@@ -132,6 +135,7 @@ class FoodAnalysisService {
 
     return FoodAnalysisResult(
       foodName: entry.name,
+      label:    label,
       calories: entry.calories,
       carbs:    entry.carbs,
       protein:  entry.protein,

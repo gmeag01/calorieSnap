@@ -24,13 +24,15 @@ class MealRecordAdapter extends TypeAdapter<MealRecord> {
       fat: fields[4] as double,
       imagePath: fields[5] as String,
       recordedAt: fields[6] as DateTime,
+      amount: fields[7] as double?,
+      unit: fields[8] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, MealRecord obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.foodName)
       ..writeByte(1)
@@ -44,7 +46,11 @@ class MealRecordAdapter extends TypeAdapter<MealRecord> {
       ..writeByte(5)
       ..write(obj.imagePath)
       ..writeByte(6)
-      ..write(obj.recordedAt);
+      ..write(obj.recordedAt)
+      ..writeByte(7)
+      ..write(obj.amount)
+      ..writeByte(8)
+      ..write(obj.unit);
   }
 
   @override
